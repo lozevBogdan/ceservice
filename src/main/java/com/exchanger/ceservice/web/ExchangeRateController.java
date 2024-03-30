@@ -23,13 +23,16 @@ public class ExchangeRateController {
 
 		BigDecimal //
 		rate = currencyLayerService.getRate(sourceCurrency, targetCurrency);
-		if(rate != null) {
-			return new ResponseEntity<ResponceRate>(new ResponceRate(sourceCurrency,targetCurrency,rate, null), HttpStatusCode.valueOf(200));
+		if (rate != null) {
+			return new ResponseEntity<ResponceRate>(new ResponceRate(sourceCurrency, targetCurrency, rate, null),
+					HttpStatusCode.valueOf(200));
 		}
-		return new ResponseEntity<ResponceRate>(new ResponceRate(sourceCurrency,targetCurrency,rate, "Not found rate by given currencies!"), HttpStatusCode.valueOf(400));
+		return new ResponseEntity<ResponceRate>(new ResponceRate(sourceCurrency, targetCurrency, rate,
+				"Not found rate by given currencies! Please ensure that both the source and target currencies are valid and supported for conversion."),
+				HttpStatusCode.valueOf(400));
 	}
-	
-	public static class ResponceRate{
+
+	public static class ResponceRate {
 		private String from;
 		private String to;
 		private BigDecimal rate;
@@ -42,27 +45,35 @@ public class ExchangeRateController {
 			this.rate = rate;
 			this.errorMessage = errorMessage;
 		}
+
 		public String getFrom() {
 			return from;
 		}
+
 		public void setFrom(String from) {
 			this.from = from;
 		}
+
 		public String getTo() {
 			return to;
 		}
+
 		public void setTo(String to) {
 			this.to = to;
 		}
+
 		public BigDecimal getRate() {
 			return rate;
 		}
+
 		public void setRate(BigDecimal rate) {
 			this.rate = rate;
 		}
+
 		public String getErrorMessage() {
 			return errorMessage;
 		}
+
 		public void setErrorMessage(String errorMessage) {
 			this.errorMessage = errorMessage;
 		}

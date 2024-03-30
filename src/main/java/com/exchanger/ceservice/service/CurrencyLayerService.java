@@ -18,24 +18,33 @@ public class CurrencyLayerService {
 	
 	@Value("${api.currencylayer.access.key}")
 	private String accessKey;
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
 	
 	public BigDecimal getRate(String srcCurrency, String trgCurrency) {
-		String url;
+
 		if (srcCurrency != null && trgCurrency != null) {
-			url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/convert").queryParam("access_key", accessKey)
-					.queryParam("from", srcCurrency).queryParam("to", trgCurrency).queryParam("amount", 1).build()
-					.toUriString();
-
-			CurrencyLayerConvertResponceDto //
-			res = restTemplate.getForObject(url, CurrencyLayerConvertResponceDto.class);
-
-			return res.getResult();
+			return convert(srcCurrency, BigDecimal.ONE, trgCurrency);
 		}
 		return null;
+	}
 
+	public BigDecimal convert(String fromCurrency, BigDecimal amount, String toCurrency) {
+		if(fromCurrency != null && toCurrency != null && amount != null) {
+			String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "/convert")
+					.queryParam("access_key", accessKey)
+					.queryParam("from", fromCurrency)
+					.queryParam("to", toCurrency)
+					.queryParam("amount", amount).build()
+					.toUriString();
+			CurrencyLayerConvertResponceDto //
+			res = restTemplate.getForObject(url, CurrencyLayerConvertResponceDto.class);
+			return res.getResult();
+		}
+		
+		return null;
+		
 	}
 
 }
