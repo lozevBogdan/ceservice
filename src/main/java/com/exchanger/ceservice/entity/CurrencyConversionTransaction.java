@@ -1,7 +1,9 @@
 package com.exchanger.ceservice.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,17 +19,33 @@ public class CurrencyConversionTransaction {
 	private String sourceCurrency;
 	private String targetCurrency;
 	private BigDecimal convertedAmount;
+	@Column(name = "created")
+	private LocalDate created;
+
+	public CurrencyConversionTransaction() {
+		super();
+	}
 
 	public CurrencyConversionTransaction(
 			String sourceCurrency,
 			BigDecimal sourceAmount, 
 			String targetCurrency,
-			BigDecimal convertedAmount) {
+			BigDecimal convertedAmount,
+			LocalDate created) {
 		super();
 		this.sourceAmount = sourceAmount;
 		this.sourceCurrency = sourceCurrency;
 		this.targetCurrency = targetCurrency;
 		this.convertedAmount = convertedAmount;
+		this.created = created;
+	}
+
+	public LocalDate getCreated() {
+		return created;
+	}
+
+	public void setCreated(LocalDate created) {
+		this.created = created;
 	}
 
 	public Long getId() {

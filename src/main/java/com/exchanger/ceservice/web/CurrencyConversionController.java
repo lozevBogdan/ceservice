@@ -1,16 +1,22 @@
 package com.exchanger.ceservice.web;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.util.Pair;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.exchanger.ceservice.entity.CurrencyConversionTransaction;
 import com.exchanger.ceservice.service.CurrencyConversionTransactionService;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @RestController
 public class CurrencyConversionController {
@@ -36,11 +42,75 @@ public class CurrencyConversionController {
 				HttpStatusCode.valueOf(400));
 	}
 
+	@GetMapping("/conversion-history")
+	public ResponseEntity<List<CurrencyConversionResponce>> getConversionHistory(
+			@RequestParam(name = "transactionId", required = false) String transactionId,
+			@RequestParam(name = "transactionDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate transactionDate,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+
+		// Check if at least one parameter is provided
+		if (transactionId == null && transactionDate == null) {
+			return new ResponseEntity<List<CurrencyConversionResponce>>(
+					List.of(new CurrencyConversionResponce(null, null, null,
+							"At least one of transactionId or transactionDate must be provided.")),
+					HttpStatusCode.valueOf(400));
+		}
+
+		if (transactionId != null) {
+			CurrencyConversionTransaction //
+			transaction = currencyConversionTransactionService.findById(Long.valueOf(transactionId));
+			if (transaction != null) {
+				return new ResponseEntity<List<CurrencyConversionResponce>>(
+						List.of(new CurrencyConversionResponce(transaction.getId(), transaction.getConvertedAmount(),
+								transaction.getTargetCurrency())),
+						HttpStatusCode.valueOf(200));
+			} else if (transactionDate == null) {
+				return new ResponseEntity<List<CurrencyConversionResponce>>(List.of(new CurrencyConversionResponce(null,
+						null, null,
+						"Transaction Not Found: No transaction was found with the provided transaction ID. Please verify the transaction ID and try again.")),
+						HttpStatusCode.valueOf(400));
+			}
+		}
+
+		if (transactionDate != null) {
+
+			Page<CurrencyConversionTransaction> res = currencyConversionTransactionService.loadByDate(transactionDate,
+					page, size);
+			if (!res.isEmpty()) {
+				List<CurrencyConversionResponce> //
+				responce = res.getContent().stream().map((e) -> mapToCurrencyConversionResponce(e)).toList();
+
+				String test = "test";
+				
+				return new ResponseEntity<List<CurrencyConversionResponce>>(
+						responce,
+						HttpStatusCode.valueOf(200));
+			}
+		}
+
+		return new ResponseEntity<List<CurrencyConversionResponce>>(List.of(new CurrencyConversionResponce(null, null,
+				null,
+				"Information Not Found: No information was found based on the provided criteria. Please check your input and try again.")),
+				HttpStatusCode.valueOf(400));
+	}
+
+	private CurrencyConversionResponce mapToCurrencyConversionResponce(CurrencyConversionTransaction e) {
+		if (e != null) {
+			return new CurrencyConversionResponce(e.getId(), e.getConvertedAmount(), e.getTargetCurrency());
+		}
+		return null;
+	}
+
 	public static class CurrencyConversionResponce {
 
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private Long transactionId;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private BigDecimal convertedAmount;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String currency;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String error;
 
 		public CurrencyConversionResponce(Long transactionId, BigDecimal convertedAmount, String currency) {
