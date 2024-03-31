@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+ app:
+  image: se-service.jar
+  ports:
+   - 8080:8080
+  environment:
+   spring.datasource.url: jdbc:h2:mem:ceservice
+   spring.datasource.driverClassName: org.h2.Driver
+   spring.datasource.username: root
+   spring.datasource.password: root
+   spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+   
+   spring.application.name: currency-exchange-service
+   api.currencylayer.base: http://api.currencylayer.com
+   api.currencylayer.access.key: 129132bc104f18cd47bceae94f6a5804
