@@ -42,7 +42,11 @@ public class CurrencyConversionTransactionService {
 		Optional<CurrencyConversionTransaction> //
 		res = currencyConversionTransactionRepository.findById(transactionId);
 		return res.isPresent() ? res.get() : null;
-		
+
+	}
+	
+	public BigDecimal getRate(String srcCurrency, String trgCurrency) {
+		return currencyLayerService.getRate(srcCurrency, trgCurrency);
 	}
 
 	public Page<CurrencyConversionTransaction> loadByDate(LocalDate transactionDate, int page, int size) {

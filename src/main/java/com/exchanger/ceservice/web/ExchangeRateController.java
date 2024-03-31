@@ -9,20 +9,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.exchanger.ceservice.service.CurrencyLayerService;
+import com.exchanger.ceservice.service.CurrencyConversionTransactionService;
 
 @RestController
 public class ExchangeRateController {
 
 	@Autowired
-	private CurrencyLayerService currencyLayerService;
+	private CurrencyConversionTransactionService currencyConversionTransactionService;
 
 	@GetMapping("/exchange-rate")
 	public ResponseEntity<ResponceRate> exchangeRate(@RequestParam("sourceCurrency") String sourceCurrency,
 			@RequestParam("targetCurrency") String targetCurrency) {
 
 		BigDecimal //
-		rate = currencyLayerService.getRate(sourceCurrency, targetCurrency);
+		rate = currencyConversionTransactionService.getRate(sourceCurrency, targetCurrency);
 		if (rate != null) {
 			return new ResponseEntity<ResponceRate>(new ResponceRate(sourceCurrency, targetCurrency, rate, null),
 					HttpStatusCode.valueOf(200));

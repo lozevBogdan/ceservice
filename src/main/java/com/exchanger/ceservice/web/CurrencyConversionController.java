@@ -49,7 +49,6 @@ public class CurrencyConversionController {
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 
-		// Check if at least one parameter is provided
 		if (transactionId == null && transactionDate == null) {
 			return new ResponseEntity<List<CurrencyConversionResponce>>(
 					List.of(new CurrencyConversionResponce(null, null, null,
@@ -69,20 +68,17 @@ public class CurrencyConversionController {
 				return new ResponseEntity<List<CurrencyConversionResponce>>(List.of(new CurrencyConversionResponce(null,
 						null, null,
 						"Transaction Not Found: No transaction was found with the provided transaction ID. Please verify the transaction ID and try again.")),
-						HttpStatusCode.valueOf(400));
+						HttpStatusCode.valueOf(404));
 			}
 		}
 
 		if (transactionDate != null) {
-
-			Page<CurrencyConversionTransaction> res = currencyConversionTransactionService.loadByDate(transactionDate,
-					page, size);
+			Page<CurrencyConversionTransaction> //
+			res = currencyConversionTransactionService.loadByDate(transactionDate,page, size);
 			if (!res.isEmpty()) {
 				List<CurrencyConversionResponce> //
 				responce = res.getContent().stream().map((e) -> mapToCurrencyConversionResponce(e)).toList();
 
-				String test = "test";
-				
 				return new ResponseEntity<List<CurrencyConversionResponce>>(
 						responce,
 						HttpStatusCode.valueOf(200));
