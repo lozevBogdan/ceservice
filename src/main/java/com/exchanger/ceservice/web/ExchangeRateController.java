@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exchanger.ceservice.service.CurrencyConversionTransactionService;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @RestController
 public class ExchangeRateController {
@@ -33,9 +34,13 @@ public class ExchangeRateController {
 	}
 
 	public static class ResponceRate {
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String from;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String to;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private BigDecimal rate;
+		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String errorMessage;
 
 		public ResponceRate(String from, String to, BigDecimal rate, String errorMessage) {

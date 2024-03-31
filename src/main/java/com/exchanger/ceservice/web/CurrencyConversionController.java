@@ -46,8 +46,7 @@ public class CurrencyConversionController {
 	public ResponseEntity<List<CurrencyConversionResponce>> getConversionHistory(
 			@RequestParam(name = "transactionId", required = false) String transactionId,
 			@RequestParam(name = "transactionDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate transactionDate,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
 		if (transactionId == null && transactionDate == null) {
 			return new ResponseEntity<List<CurrencyConversionResponce>>(
@@ -74,17 +73,14 @@ public class CurrencyConversionController {
 
 		if (transactionDate != null) {
 			Page<CurrencyConversionTransaction> //
-			res = currencyConversionTransactionService.loadByDate(transactionDate,page, size);
+			res = currencyConversionTransactionService.loadByDate(transactionDate, page, size);
 			if (!res.isEmpty()) {
 				List<CurrencyConversionResponce> //
 				responce = res.getContent().stream().map((e) -> mapToCurrencyConversionResponce(e)).toList();
 
-				return new ResponseEntity<List<CurrencyConversionResponce>>(
-						responce,
-						HttpStatusCode.valueOf(200));
+				return new ResponseEntity<List<CurrencyConversionResponce>>(responce, HttpStatusCode.valueOf(200));
 			}
 		}
-
 		return new ResponseEntity<List<CurrencyConversionResponce>>(List.of(new CurrencyConversionResponce(null, null,
 				null,
 				"Information Not Found: No information was found based on the provided criteria. Please check your input and try again.")),
@@ -108,6 +104,11 @@ public class CurrencyConversionController {
 		private String currency;
 		@JsonInclude(JsonInclude.Include.NON_NULL)
 		private String error;
+
+		public CurrencyConversionResponce() {
+			super();
+
+		}
 
 		public CurrencyConversionResponce(Long transactionId, BigDecimal convertedAmount, String currency) {
 			super();
