@@ -35,7 +35,10 @@ public class CurrencyConversionTransactionService {
 	}
 
 	public CurrencyConversionTransaction save(CurrencyConversionTransaction entity) {
-		return currencyConversionTransactionRepository.save(entity);
+		if (entity != null) {
+			return currencyConversionTransactionRepository.save(entity);
+		}
+		return null;
 	}
 
 	public CurrencyConversionTransaction findById(Long transactionId) {
@@ -51,6 +54,23 @@ public class CurrencyConversionTransactionService {
 
 	public Page<CurrencyConversionTransaction> loadByDate(LocalDate transactionDate, int page, int size) {
 		return currencyConversionTransactionRepository.findByCreated(transactionDate, PageRequest.of(page, size));
+	}
+
+	public CurrencyConversionTransactionRepository getCurrencyConversionTransactionRepository() {
+		return currencyConversionTransactionRepository;
+	}
+
+	public void setCurrencyConversionTransactionRepository(
+			CurrencyConversionTransactionRepository currencyConversionTransactionRepository) {
+		this.currencyConversionTransactionRepository = currencyConversionTransactionRepository;
+	}
+
+	public CurrencyLayerService getCurrencyLayerService() {
+		return currencyLayerService;
+	}
+
+	public void setCurrencyLayerService(CurrencyLayerService currencyLayerService) {
+		this.currencyLayerService = currencyLayerService;
 	}
 
 }
